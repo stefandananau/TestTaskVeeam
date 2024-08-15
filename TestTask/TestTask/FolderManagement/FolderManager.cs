@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using TestTask.Logging;
 
 namespace TestTask.FolderManagement
@@ -15,6 +16,8 @@ namespace TestTask.FolderManagement
         private int _syncNumber;
         private bool _updateInstantly = false;
         private bool _isStarted = false;
+        private int _count;
+        private List<FolderContentItem> oldMainFolderContents;
 
         public FolderManager(string mainFolder, string copyFolder, int syncInterval)
         {
@@ -22,6 +25,7 @@ namespace TestTask.FolderManagement
             _copyFolder = copyFolder;
             _syncInterval = syncInterval;
             _syncNumber = 1;
+            _count = 1;
             CreateMainFolder();
             CreateCopyFolder();
         }
@@ -30,7 +34,19 @@ namespace TestTask.FolderManagement
         {
             if (_isStarted) return;
             _isStarted = true;
+            oldMainFolderContents = GetDirectoryContent(new DirectoryInfo(_mainFolder)).OrderBy(item => item.Depth).ToList();
+            Logger.Log("The real-time synchronization and loggging is started", LogLevel.Info);
+            new Timer(Tick, new AutoResetEvent(false), CHECK_INTERVAL * 1000, CHECK_INTERVAL * 1000);
+        }
 
+        public void Tick(Object stateiIfo)
+        {
+            LogMainFolderUpdates();
+            if(_count % _syncInterval == 0)
+            {
+                Synchronize();
+            }
+            _count++;
         }
 
         private void CreateMainFolder()
@@ -65,6 +81,33 @@ namespace TestTask.FolderManagement
             }
         }
 
+        private void LogMainFolderUpdates()
+        {
+            List<FolderContentItem> newMainFolderContents = GetDirectoryContent(new DirectoryInfo(_mainFolder)).OrderBy(item => item.Depth).ToList();
+            List<FolderContentItem> removedItems = oldMainFolderContents.Where(oldItem => !newMainFolderContents.Any(newItem => oldItem.Equals(oldItem))).ToList();
+            List<FolderContentItem> addedItems = newMainFolderContents.Where(newItem => !oldMainFolderContents.Any(oldItem => newItem.Equals(oldItem))).ToList();
+            removedItems.OrderByDescending(item => item.Depth).ToList().ForEach(item => LogModificationItem(item, false));
+            addedItems.ForEach(item => LogModificationItem(item, true));
+            oldMainFolderContents = newMainFolderContents;
+        }
+
+        private void LogModificationItem(FolderContentItem item, bool wasAdded)
+        {
+            string logActionText = wasAdded ? "added to" : "removed from";
+            switch (item.ContentType)
+            {
+                case FolderContentType.Folder:
+                    Logger.Log($"Folder '{item.Name}' was {logActionText} the main folder", LogLevel.Info);
+                    break;
+                case FolderContentType.File:
+                    Logger.Log($"File '{item.Name}' was {logActionText} the main folder", LogLevel.Info);
+                    break;
+                default:
+                    Logger.Log($"Item '{item.Name}' has no type", LogLevel.Error);
+                    break;
+            }
+        }
+
         private void Synchronize()
         {
             Logger.Log($"Synchronization with ID='{_syncNumber}' has begun", LogLevel.Info);
@@ -76,6 +119,7 @@ namespace TestTask.FolderManagement
             AddItemsToCopyFolder(mainFolderContents, copyFolderContents);
             
             Logger.Log($"Synchronization with ID='{_syncNumber}' is finished", LogLevel.Info);
+            _syncNumber++;
         }
 
         private void RemoveExtraItemsFromCopyFolder(List<FolderContentItem> mainFolderContents, List<FolderContentItem> copyFolderContents)

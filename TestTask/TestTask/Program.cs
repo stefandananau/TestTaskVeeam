@@ -21,6 +21,7 @@ namespace TestTask
             Console.WriteLine("Press any key to start real-time synchronization...");
             Console.ReadKey();
             Console.WriteLine("\nREAL TIME SYNCHRONIZATION STARTED");
+            folderManager.Start();
             Console.WriteLine("Press any key to stop the application...");
             Console.ReadKey();
         }
