@@ -1,0 +1,16 @@
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\bin\Debug\TestTask.exe.config
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\bin\Debug\TestTask.exe
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\bin\Debug\TestTask.pdb
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\obj\Debug\TestTask.csproj.AssemblyReference.cache
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\obj\Debug\TestTask.csproj.SuggestedBindingRedirects.cache
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\obj\Debug\TestTask.csproj.CoreCompileInputs.cache
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\obj\Debug\TestTask.exe
+C:\Users\stefan\Documents\GitHub\ForumDAW\TestTask\TestTask\obj\Debug\TestTask.pdb
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\bin\Debug\TestTask.exe.config
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\bin\Debug\TestTask.exe
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\bin\Debug\TestTask.pdb
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\obj\Debug\TestTask.csproj.AssemblyReference.cache
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\obj\Debug\TestTask.csproj.SuggestedBindingRedirects.cache
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\obj\Debug\TestTask.csproj.CoreCompileInputs.cache
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\obj\Debug\TestTask.exe
+C:\Users\stefan\Documents\GitHub\TestTaskVeeam\TestTask\TestTask\obj\Debug\TestTask.pdb
