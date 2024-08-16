@@ -36,7 +36,7 @@ namespace TestTask
         {
             Console.WriteLine("WELCOME TO THE DIRECTORY SYNCHRONIZATION PROGRAM");
             Console.WriteLine("--> Created by Dananau Stefan <--");
-            Console.WriteLine("\nINSTRUCTIONS:");
+            Console.WriteLine("\nINSTRUCTIONS AND WARNINGS:");
             Console.WriteLine("1.Visual Studio should be opened with administrator rights");
             Console.WriteLine("2.Paths should be of format 'Disk:\\folder1\\folder2\\etc..'");
             Console.WriteLine("3.If the main folder already exists, all existing items within it will be copied to the copy folder");
