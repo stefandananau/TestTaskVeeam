@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="FolderManagement\FolderContentItem.cs" />
     <Compile Include="FolderManagement\FolderContentType.cs" />
     <Compile Include="FolderManagement\FolderManager.cs" />

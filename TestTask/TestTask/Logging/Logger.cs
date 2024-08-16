@@ -5,15 +5,16 @@ namespace TestTask.Logging
 {
     internal static class Logger
     {
-        public const string LOG_PATH = "C:\\CopyFolderLog.txt";
+        public static string logPath;
 
-        public static void StartLogging()
+        public static void StartLogging(string path)
         {
-            if(File.Exists(LOG_PATH)) 
+            logPath = path;
+            if(File.Exists(logPath)) 
             {  
-                File.Delete(LOG_PATH); 
+                File.Delete(logPath); 
             }
-            Log("Logging started", LogLevel.Info);
+            Log($"Logging started, logs can be found at {logPath}", LogLevel.Info);
         }
 
         public static void Log(string message, LogLevel level)
@@ -21,7 +22,7 @@ namespace TestTask.Logging
             string logMessage = $"[{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}][{level}]:{message}";
             try
             {
-                using (StreamWriter w = File.AppendText(LOG_PATH))
+                using (StreamWriter w = File.AppendText(logPath))
                 {
                     WriteLogToFile(logMessage, w);
                     Console.WriteLine(logMessage);
