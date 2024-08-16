@@ -84,23 +84,23 @@ namespace TestTask.FolderManagement
         private void LogMainFolderUpdates()
         {
             List<FolderContentItem> newMainFolderContents = GetDirectoryContent(new DirectoryInfo(_mainFolder)).OrderBy(item => item.Depth).ToList();
-            List<FolderContentItem> removedItems = oldMainFolderContents.Where(oldItem => !newMainFolderContents.Any(newItem => oldItem.Equals(oldItem))).ToList();
-            List<FolderContentItem> addedItems = newMainFolderContents.Where(newItem => !oldMainFolderContents.Any(oldItem => newItem.Equals(oldItem))).ToList();
-            removedItems.OrderByDescending(item => item.Depth).ToList().ForEach(item => LogModificationItem(item, false));
-            addedItems.ForEach(item => LogModificationItem(item, true));
+            List<FolderContentItem> removedItems = oldMainFolderContents.Where(oldItem => !newMainFolderContents.Any(newItem => oldItem.SurfaceEquals(oldItem))).ToList();
+            List<FolderContentItem> addedItems = newMainFolderContents.Where(newItem => !oldMainFolderContents.Any(oldItem => newItem.SurfaceEquals(oldItem))).ToList();
+            removedItems.OrderByDescending(item => item.Depth).ToList().ForEach(item => LogMainFolderModifications(item, "removed from"));
+            addedItems.ForEach(item => LogMainFolderModifications(item, "added to"));
+            GetModifiedItems(newMainFolderContents, oldMainFolderContents).ForEach(item => LogMainFolderModifications(item, "modified in"));
             oldMainFolderContents = newMainFolderContents;
         }
 
-        private void LogModificationItem(FolderContentItem item, bool wasAdded)
+        private void LogMainFolderModifications(FolderContentItem item, string logActionText)
         {
-            string logActionText = wasAdded ? "added to" : "removed from";
             switch (item.ContentType)
             {
                 case FolderContentType.Folder:
-                    Logger.Log($"Folder '{item.Name}' was {logActionText} the main folder", LogLevel.Info);
+                    Logger.Log($"Folder '{item.Name}' was {logActionText} main folder", LogLevel.Info);
                     break;
                 case FolderContentType.File:
-                    Logger.Log($"File '{item.Name}' was {logActionText} the main folder", LogLevel.Info);
+                    Logger.Log($"File '{item.Name}' was {logActionText} main folder", LogLevel.Info);
                     break;
                 default:
                     Logger.Log($"Item '{item.Name}' has no type", LogLevel.Error);
@@ -114,9 +114,9 @@ namespace TestTask.FolderManagement
 
             List<FolderContentItem> mainFolderContents = GetDirectoryContent(new DirectoryInfo(_mainFolder)).OrderByDescending(item => item.Depth).ToList();
             List<FolderContentItem> copyFolderContents = GetDirectoryContent(new DirectoryInfo(_copyFolder)).OrderByDescending(item => item.Depth).ToList();
-            
             RemoveExtraItemsFromCopyFolder(mainFolderContents, copyFolderContents);
             AddItemsToCopyFolder(mainFolderContents, copyFolderContents);
+            GetModifiedItems(copyFolderContents, mainFolderContents).ForEach(item => ReplaceInCopyFolder(item));
             
             Logger.Log($"Synchronization with ID='{_syncNumber}' is finished", LogLevel.Info);
             _syncNumber++;
@@ -125,7 +125,7 @@ namespace TestTask.FolderManagement
         private void RemoveExtraItemsFromCopyFolder(List<FolderContentItem> mainFolderContents, List<FolderContentItem> copyFolderContents)
         {
             mainFolderContents.ForEach(item => item.Name = item.Name.Replace(_mainFolder, _copyFolder));
-            List<FolderContentItem> itemsToRemove = copyFolderContents.Where(copyItem => !mainFolderContents.Any(mainItem => copyItem.Equals(mainItem))).ToList();
+            List<FolderContentItem> itemsToRemove = copyFolderContents.Where(copyItem => !mainFolderContents.Any(mainItem => copyItem.SurfaceEquals(mainItem))).ToList();
             itemsToRemove.ForEach(item => RemoveFromCopyFolder(item));
         }
 
@@ -133,7 +133,7 @@ namespace TestTask.FolderManagement
         {
             mainFolderContents.Reverse();
             copyFolderContents.Reverse();
-            List<FolderContentItem> itemsToAdd = mainFolderContents.Where(mainItem => !copyFolderContents.Any(copyItem => mainItem.Equals(copyItem))).ToList();
+            List<FolderContentItem> itemsToAdd = mainFolderContents.Where(mainItem => !copyFolderContents.Any(copyItem => mainItem.SurfaceEquals(copyItem))).ToList();
             itemsToAdd.ForEach(item => AddToCopyFolder(item));
         }
 
@@ -187,6 +187,26 @@ namespace TestTask.FolderManagement
             }
         }
 
+        private void ReplaceInCopyFolder(FolderContentItem item)
+        {
+            //This method is only used for files
+            try
+            {
+                File.Delete(item.Name);
+                File.Copy(item.Name.Replace(_copyFolder, _mainFolder), item.Name);
+                Logger.Log($"File '{item.Name}' succesfully replaced in copy folder", LogLevel.Info);
+            }
+            catch(Exception)
+            {
+                Logger.Log($"Error on replacing file '{item.Name}' in the copy folder, the file should not be open and with saved modifications at the moment of synchronization", LogLevel.Error);
+            }
+        }
+
+        private List<FolderContentItem> GetModifiedItems(List<FolderContentItem> firstSet, List<FolderContentItem> secondSet) => firstSet
+            .Where(item => item.ContentType == FolderContentType.File)
+            .Where(firstItem => secondSet.Any(secondItem => firstItem.SurfaceEquals(secondItem) && firstItem.LastModificationDateTime != secondItem.LastModificationDateTime))
+            .ToList();
+
         private IEnumerable<FolderContentItem> GetDirectoryContent(DirectoryInfo directory, int depth = 0)
         {
             if (depth != 0)
@@ -198,7 +218,7 @@ namespace TestTask.FolderManagement
                     yield return item;
 
             foreach (var file in directory.GetFiles())
-                yield return new FolderContentItem(file.FullName, depth + 1, FolderContentType.File);
+                yield return new FolderContentItem(file.FullName, depth + 1, FolderContentType.File, file.LastWriteTime);
         }
     }
 }
