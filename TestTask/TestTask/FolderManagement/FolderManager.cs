@@ -84,7 +84,7 @@ namespace TestTask.FolderManagement
         private void LogMainFolderUpdates()
         {
             List<FolderContentItem> newMainFolderContents = GetDirectoryContent(new DirectoryInfo(_mainFolder)).OrderBy(item => item.Depth).ToList();
-            List<FolderContentItem> removedItems = oldMainFolderContents.Where(oldItem => !newMainFolderContents.Any(newItem => oldItem.SurfaceEquals(oldItem))).ToList();
+            List<FolderContentItem> removedItems = oldMainFolderContents.Where(oldItem => !newMainFolderContents.Any(newItem => oldItem.SurfaceEquals(newItem))).ToList();
             List<FolderContentItem> addedItems = newMainFolderContents.Where(newItem => !oldMainFolderContents.Any(oldItem => newItem.SurfaceEquals(oldItem))).ToList();
             removedItems.OrderByDescending(item => item.Depth).ToList().ForEach(item => LogMainFolderModifications(item, "removed from"));
             addedItems.ForEach(item => LogMainFolderModifications(item, "added to"));

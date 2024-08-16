@@ -24,11 +24,9 @@ namespace TestTask
             int syncInterval = ReadSyncInterval();
             FolderManager folderManager = new FolderManager(mainFolderPath, copyFolderPath, syncInterval);
             Console.WriteLine("\nIf the main folder already contained files, a synchronization was done before starting real-time synchronization");
-            Console.WriteLine("Press any key to start real-time synchronization...");
-            Console.ReadKey();
             Console.WriteLine("\nREAL TIME SYNCHRONIZATION STARTED");
             folderManager.Start();
-            Console.WriteLine("Press any key to stop the application...");
+            Console.WriteLine("Press any key to stop the application");
             Console.ReadKey();
         }
 
@@ -43,6 +41,7 @@ namespace TestTask
             Console.WriteLine("4.If the copy folder already exists, all existing items within it will be DELETED");
             Console.WriteLine("5.If the synchronization interval is not between 5 and 180 seconds or is invalid it will be defaulted to 30 seconds");
             Console.WriteLine("6.The checking interval (it checks for added files in the main directory without copying them) is 1 second by default");
+            Console.WriteLine("7.Read further instructions carefuly");
             Console.WriteLine("\nBy pressing any key you agree that you read all the instructions... (press any key to continue)");
             Console.ReadKey();
             Console.Clear();
