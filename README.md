@@ -10,6 +10,8 @@ If all the instructions provided at the start of the console application are res
 ->copy and log modifications to the main folder into the copy folder every N (synchronization interval seconds)
 
 
+The application was tested with .txt .png .rar files and with folders
+
 Some error handling mechanisms are in place but in order to have the best experience follow the instructions and warnings (which are added here and at the start of the console application)
 
 ->Visual Studio should be opened with administrator rights
